@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-// import { API_URL } from "@/config/index";
+import { API_URL } from "@/config/index";
 import "antd/dist/antd.css";
 import { Form, Button, Checkbox, DatePicker, Input, Select, Space } from "antd";
 
 function Register() {
   const onFinish = async (values) => {
     console.log("Success:", values);
-    const API_URL = "http://localhost:59042/api";
+    // const API_URL = "http://localhost:59042/api";
     const response = await fetch(`${API_URL}/User/AddNewUser`, {
       method: "POST",
       body: JSON.stringify({ values }),
