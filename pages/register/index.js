@@ -1,16 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { API_URL } from "@/config/index";
+// import { API_URL } from "@/config/index";
 import "antd/dist/antd.css";
 import { Form, Button, Checkbox, DatePicker, Input, Select, Space } from "antd";
 
-function index() {
+function Register() {
+  const onFinish = async (values) => {
+    console.log("Success:", values);
+    const API_URL = "http://localhost:59042/api";
+    const response = await fetch(`${API_URL}/User/AddNewUser`, {
+      method: "POST",
+      body: JSON.stringify({ values }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+
+    // var mobileNo = values.mobileNo.replace(/[ ]+/g, "");
+    // console.log(mobileNo);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
   const [countries, setCountries] = useState([]);
   useEffect(() => {
     const getCountries = async () => {
       const res = await fetch(`${API_URL}/Miscellaneous/GetCountries`);
       const { data } = await res.json();
       setCountries(data);
-      console.log(data);
     };
     getCountries();
   }, []);
@@ -21,15 +40,11 @@ function index() {
           autoComplete="off"
           labelCol={{ span: 10 }}
           wrapperCol={{ span: 14 }}
-          onFinish={(values) => {
-            console.log({ values });
-          }}
-          onFinishFailed={(error) => {
-            console.log({ error });
-          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
         >
           <Form.Item
-            name="firstName"
+            name="first_Name"
             label="First Name"
             rules={[
               {
@@ -45,7 +60,7 @@ function index() {
           </Form.Item>
 
           <Form.Item
-            name="lastName"
+            name="last_Name"
             label="Last Name"
             rules={[
               {
@@ -61,21 +76,6 @@ function index() {
           </Form.Item>
 
           <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              {
-                required: true,
-                message: "Please enter your email",
-              },
-              { type: "email", message: "Please enter a valid email" },
-            ]}
-            hasFeedback
-          >
-            <Input placeholder="Type your email" />
-          </Form.Item>
-
-          <Form.Item
             name="password"
             label="Password"
             rules={[
@@ -85,7 +85,7 @@ function index() {
               { min: 6 },
               {
                 validator: (_, value) =>
-                  value && value.includes("A")
+                  value
                     ? Promise.resolve()
                     : Promise.reject("Password does not match criteria."),
               },
@@ -120,7 +120,22 @@ function index() {
           </Form.Item>
 
           <Form.Item
-            name="country"
+            name="email"
+            label="Email"
+            rules={[
+              {
+                required: true,
+                message: "Please enter your email",
+              },
+              { type: "email", message: "Please enter a valid email" },
+            ]}
+            hasFeedback
+          >
+            <Input placeholder="Type your email" />
+          </Form.Item>
+
+          <Form.Item
+            name="country_ID"
             label="Country"
             rules={[
               {
@@ -131,59 +146,27 @@ function index() {
           >
             <Select placeholder="Select Country">
               {countries.map((country) => (
-                <Select.Option value={country.id}>{country.name}</Select.Option>
+                <Select.Option key={country.id} value={country.id}>
+                  {country.name}
+                </Select.Option>
               ))}
             </Select>
           </Form.Item>
-
-          {/* <Form.Item
-            name="dob"
-            label="Date of Birth"
-            rules={[
-              {
-                required: true,
-                message: "Please provide your date of birth",
-              },
-            ]}
-            hasFeedback
-          >
-            <DatePicker
-              style={{ width: "100%" }}
-              picker="date"
-              placeholder="Chose date of birth"
-            />
-          </Form.Item> */}
 
           <Form.Item
             name="mobileNo"
             label="Mobile No"
             rules={[
-              { type: "string", message: "Please enter a valid Mobile No" },
+              {
+                required: true,
+                type: "string",
+                message: "Please enter a valid Mobile No",
+              },
             ]}
+            hasFeedback
           >
             <Input placeholder="Add your Mobile No" />
           </Form.Item>
-
-          {/* <Form.Item
-            name="agreement"
-            wrapperCol={{ span: 24 }}
-            valuePropName="checked"
-            rules={[
-              {
-                validator: (_, value) =>
-                  value
-                    ? Promise.resolve()
-                    : Promise.reject(
-                        "To proceed, you need to agree with our terms and conditions"
-                      ),
-              },
-            ]}
-          >
-            <Checkbox>
-              {" "}
-              Agree to our <a href="#">Terms and Conditions</a>
-            </Checkbox>
-          </Form.Item> */}
 
           <Form.Item wrapperCol={{ span: 24 }}>
             <Button block type="primary" htmlType="submit">
@@ -196,4 +179,4 @@ function index() {
   );
 }
 
-export default index;
+export default Register;
